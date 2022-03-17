@@ -95,7 +95,6 @@ def check_tokens():
 
 def main():
     """Основная логика работы бота."""
-
     if not check_tokens():
         print('Сбой, что-то не так с токенами')
         sys.exit()
