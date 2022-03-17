@@ -100,7 +100,7 @@ def main():
         sys.exit()
 
     bot = Bot(token=TELEGRAM_TOKEN)
-    date = datetime.datetime(2022, 2, 16)
+    date = datetime.datetime(2022, 3, 16)
     current_timestamp = int(date.timestamp())
     last_message = None
 
@@ -110,7 +110,6 @@ def main():
             homeworks = check_response(response)
             status = parse_status(homeworks)
             send_message(bot, status)
-            logging.info('В Telegram отправлено сообщение')
 
             current_timestamp = int(time.time())
             time.sleep(RETRY_TIME)
