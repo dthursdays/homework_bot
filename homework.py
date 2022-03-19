@@ -59,6 +59,7 @@ def get_api_answer(current_timestamp):
         response = requests.get(ENDPOINT, headers=HEADERS, params=payload)
     except requests.exceptions.RequestException as error:
         logger.error(f'Ошибка запроса к URL: {error}')
+        sys.exit()
 
     if response.status_code != HTTPStatus.OK:
         message = f'Эндпоинт не доступен. Код {response.status_code}'
@@ -86,7 +87,7 @@ def check_response(response):
 
     homeworks = response.get('homeworks')
     if not homeworks:
-        raise NothingNewError()
+        raise NothingNewError('В ответе отсуствуют новые статусы')
     return homeworks[0]
 
 
@@ -94,9 +95,12 @@ def parse_status(homework):
     """Парсинг полученных данных."""
     if not isinstance(homework, dict) or not homework:
         raise KeyError('Неверный формат данных о проверке ДЗ')
-    homework_name = homework.get('homework_name')
-    homework_status = homework.get('status')
 
+    homework_name = homework.get('homework_name')
+    if not homework_name:
+        raise KeyError('Не удалось получить название домашней работы')
+
+    homework_status = homework.get('status')
     if homework_status not in HOMEWORK_STATUSES:
         raise HomeworkStatusError('Неизвестный статус'
                                   f' домашней работы: {homework_status}')
@@ -134,8 +138,8 @@ def main():
             current_timestamp = int(time.time())
             time.sleep(RETRY_TIME)
 
-        except NothingNewError:
-            logger.debug('В ответе отсуствуют новые статусы')
+        except NothingNewError as error:
+            logger.debug(error)
             time.sleep(RETRY_TIME)
 
         except Exception as error:
