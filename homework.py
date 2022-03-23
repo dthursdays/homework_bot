@@ -4,7 +4,7 @@ import os
 import sys
 import time
 from http import HTTPStatus
-from logging.handlers import RotatingFileHandler
+from logging import StreamHandler
 
 import requests
 import telegram
@@ -30,7 +30,7 @@ HOMEWORK_STATUSES = {
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
-handler = RotatingFileHandler('main.log', maxBytes=50000000, backupCount=5)
+handler = StreamHandler(sys.stdout)
 logger.addHandler(handler)
 
 formatter = logging.Formatter(
